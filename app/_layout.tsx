@@ -1,12 +1,29 @@
+import { Ionicons } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-
-import { useColorScheme } from '@/components/useColorScheme';
-
+import { TouchableOpacity } from 'react-native';
+import { ClerkProvider, SignedIn, useAuth } from '@clerk/clerk-expo';
+import * as SecureStore from 'expo-secure-store'
+const CLERK_PUBLISHABLE_KEY='pk_test_aGlwLWJsb3dmaXNoLTEwLmNsZXJrLmFjY291bnRzLmRldiQ'
+const tokenCache = {
+  async getToken(key:string){
+    try {
+      return SecureStore.getItemAsync(key)
+    } catch (error) {
+      return;
+    }
+  },
+  async saveToken(key:string , value: string){
+    try {
+      return SecureStore.setItemAsync(key,value)
+    } catch (error) {
+      return;
+    }
+  }
+}
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -41,18 +58,37 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return (
+    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
+      <RootLayoutNav />
+    </ClerkProvider>
+  )
 }
 
-function RootLayoutNav() {
-  const colorScheme = useColorScheme();
 
+function RootLayoutNav() {
+  const router = useRouter();
+  const {isLoaded , isSignedIn} = useAuth();
+
+  useEffect(()=>{
+    if(isLoaded && !isSignedIn){
+      router.push('/(modals)/login')
+    }
+  },[isLoaded])
+  
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="(modals)/login" options={{
+          presentation: 'modal',
+          title:"Login or Sign Up",
+          headerTitleAlign:"center",
+          headerLeft:()=>(
+            <TouchableOpacity onPress={()=>router.back()}>
+              <Ionicons name='close' size={25}/>
+            </TouchableOpacity>
+          )
+        }}/>
       </Stack>
-    </ThemeProvider>
   );
 }
