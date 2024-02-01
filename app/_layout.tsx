@@ -89,6 +89,10 @@ function RootLayoutNav() {
             </TouchableOpacity>
           )
         }}/>
+        <Stack.Screen name="listings/[id]" options={{
+          headerTitle:'',
+          headerTransparent:false,
+        }}/>
       </Stack>
   );
 }

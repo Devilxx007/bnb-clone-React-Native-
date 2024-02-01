@@ -27,12 +27,12 @@ const ExploreHead = ({onCategorychanged}:props) => {
   
   return (
     <SafeAreaView className = "">
-      <View className = " flex flex-row justify-around items-center bg-white">
-        <TouchableOpacity className = ' flex flex-row items-center border border-gray-500 w-[290px] rounded-full p-2'>
+      <View className = " flex flex-row justify-around items-center bg-white ">
+        <TouchableOpacity className = ' flex flex-row items-center border border-gray-500 w-[290px] rounded-full  p-2'>
         <View className = ''>
           <Ionicons name='search' size={28}/>
         </View>
-        <View className = " ml-2">
+        <View className = " ml-2 ">
           <Text className = " text-base font-medium">Where to?</Text>
           <Text className = " text-base font-medium">Anywhere-Any week-Add guest</Text>
         </View>
